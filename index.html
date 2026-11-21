@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>A Little Christmas Surprise ✨</title>
+  <meta name="description" content="A warm, magical Christmas surprise made just for someone special.">
+  <meta name="theme-color" content="#0d1117">
+
+  <!-- Favicon (Magical Star) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%22 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎄</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Ambient Snowfall Canvas (Composition layer for smooth 60fps) -->
+  <canvas id="snow-canvas" aria-hidden="true"></canvas>
+
+  <!-- Ambient Floating Magic Sparkles Container -->
+  <div class="sparkles-container" id="sparkles-container" aria-hidden="true"></div>
+
+  <!-- Ambient Sound Control (Enchanted Music Box) -->
+  <header class="app-header">
+    <div class="story-progress" id="story-progress" role="progressbar" aria-label="Story Progress" aria-valuenow="1" aria-valuemin="1" aria-valuemax="6">
+      <div class="progress-dot active" data-step="1"></div>
+      <div class="progress-dot" data-step="2"></div>
+      <div class="progress-dot" data-step="3"></div>
+      <div class="progress-dot" data-step="4"></div>
+      <div class="progress-dot" data-step="5"></div>
+      <div class="progress-dot" data-step="6"></div>
+    </div>
+
+    <button id="music-toggle" class="music-btn" aria-label="Toggle magical music box" title="Play ambient music box melody">
+      <span class="music-icon">🎵</span>
+      <span class="music-waves" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+  </header>
+
+  <!-- Main Story Viewer -->
+  <main class="story-viewport" id="story-viewport">
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: WELCOME                          -->
+    <!-- ========================================== -->
+    <section class="screen-card active" id="screen-1" data-index="1" aria-label="Welcome Screen">
+      <div class="screen-bg bg-welcome">
+        <div class="ambient-glow glow-top"></div>
+        <div class="ambient-glow glow-bottom"></div>
+        <!-- Decorative Hogwarts Silhouette and Lantern -->
+        <div class="scene-decorations">
+          <div class="hogwarts-silhouette" aria-hidden="true"></div>
+          <div class="warm-lantern" aria-hidden="true">
+            <div class="lantern-glow"></div>
+            <div class="lantern-candle"></div>
+          </div>
+          <div class="pine-branch pine-left" aria-hidden="true"></div>
+          <div class="pine-branch pine-right" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="card-wrapper">
+        <article class="parchment-card parchment-sealed">
+          <!-- Wax Seal Stamp -->
+          <div class="wax-seal" aria-hidden="true">
+            <span class="seal-letter">H</span>
+          </div>
+
+          <!-- Harry Potter Glasses & Lightning Scar Icon -->
+          <div class="hp-emblem" aria-hidden="true">
+            <svg class="hp-glasses" viewBox="0 0 100 40" fill="none" stroke="currentColor">
+              <path d="M 48 10 L 52 10" stroke-width="2" />
+              <circle cx="28" cy="22" r="14" stroke-width="2.5" />
+              <circle cx="72" cy="22" r="14" stroke-width="2.5" />
+              <path class="hp-scar" d="M 50 1 L 46 8 L 51 9 L 47 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+
+          <p class="card-tagline" id="s1-tagline">A little something for you...</p>
+          <h1 class="card-title font-magical" id="s1-heading">Hey Mehak! <span class="sparkle-gold">✨</span></h1>
+
+          <div class="card-divider" aria-hidden="true">
+            <span class="divider-star">✦</span>
+          </div>
+
+          <p class="card-body font-letter" id="s1-message">
+            I made a little something for you. It's a mix of books, magic, Christmas and a few honest thoughts I've been meaning to share.
+          </p>
+
+          <button class="magical-btn btn-primary" id="btn-start" aria-label="Start experience">
+            <span class="btn-text" id="s1-button">Let's Begin ✨</span>
+            <div class="btn-shimmer" aria-hidden="true"></div>
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: WHAT I NOTICE                    -->
+    <!-- ========================================== -->
+    <section class="screen-card" id="screen-2" data-index="2" aria-label="What I Notice">
+      <div class="screen-bg bg-notice">
+        <div class="ambient-glow glow-center"></div>
+        <div class="scene-decorations">
+          <div class="snowy-pines" aria-hidden="true"></div>
+          <div class="fairy-lights" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="card-wrapper">
+        <article class="parchment-card">
+          <!-- Mini emblem -->
+          <div class="hp-emblem mini" aria-hidden="true">
+            <svg class="hp-glasses" viewBox="0 0 100 40" fill="none" stroke="currentColor">
+              <circle cx="30" cy="22" r="13" stroke-width="2.5" />
+              <circle cx="70" cy="22" r="13" stroke-width="2.5" />
+              <path d="M 43 20 Q 50 16 57 20" stroke-width="2" fill="none" />
+              <path class="hp-scar" d="M 50 2 L 46 8 L 51 9 L 47 15" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <h2 class="card-title-script font-script" id="s2-title">A Few Things About You...</h2>
+
+          <ul class="noticed-list" id="s2-list">
+            <!-- Dynamically populated or static fallback -->
+            <li class="noticed-item">
+              <span class="noticed-icon">📖</span>
+              <div class="noticed-content">
+                <span>Your love for <strong>Harry Potter</strong> ✨</span>
+              </div>
+            </li>
+            <li class="noticed-item">
+              <span class="noticed-icon">🎵</span>
+              <div class="noticed-content">
+                <span>The way you get <strong>excited about the little things</strong> ♡</span>
+              </div>
+            </li>
+            <li class="noticed-item">
+              <span class="noticed-icon">💬</span>
+              <div class="noticed-content">
+                <span>Our conversations (which <strong>always feel easy</strong>)</span>
+              </div>
+            </li>
+            <li class="noticed-item">
+              <span class="noticed-icon">⭐</span>
+              <div class="noticed-content">
+                <span>And just... <strong>the way you are</strong>. ♡</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="card-nav-single">
+            <button class="nav-circle-btn next-step-btn" data-target="3" aria-label="Go to next screen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: MY FEELINGS                      -->
+    <!-- ========================================== -->
+    <section class="screen-card" id="screen-3" data-index="3" aria-label="My Feelings">
+      <div class="screen-bg bg-feelings">
+        <div class="ambient-glow glow-warm"></div>
+        <div class="scene-decorations">
+          <div class="study-bookshelf" aria-hidden="true"></div>
+          <div class="candle-cluster" aria-hidden="true">
+            <div class="candle c1"><div class="flame"></div></div>
+            <div class="candle c2"><div class="flame"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-wrapper">
+        <article class="parchment-card card-intimate">
+          <div class="hp-emblem mini" aria-hidden="true">
+            <svg class="hp-glasses" viewBox="0 0 100 40" fill="none" stroke="currentColor">
+              <circle cx="30" cy="22" r="13" stroke-width="2.5" />
+              <circle cx="70" cy="22" r="13" stroke-width="2.5" />
+              <path d="M 43 20 Q 50 16 57 20" stroke-width="2" fill="none" />
+              <path class="hp-scar" d="M 50 2 L 46 8 L 51 9 L 47 15" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <h2 class="card-title-script font-script" id="s3-intro">So, here's the honest part... ✨</h2>
+
+          <!-- The Confession Box with Gentle Pulse -->
+          <div class="confession-banner" id="s3-badge">
+            <span class="confession-text">I like you, Mehak. ♡</span>
+            <div class="banner-border-glow" aria-hidden="true"></div>
+          </div>
+
+          <p class="card-body font-letter intimate-body" id="s3-body">
+            I've really enjoyed getting to know you, and over time, you've become someone I genuinely like and care about.
+          </p>
+
+          <div class="card-nav-single">
+            <button class="nav-circle-btn next-step-btn" data-target="4" aria-label="Go to next screen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4: WHAT I WANT                      -->
+    <!-- ========================================== -->
+    <section class="screen-card" id="screen-4" data-index="4" aria-label="What I Want">
+      <div class="screen-bg bg-want">
+        <div class="ambient-glow glow-magic"></div>
+        <div class="scene-decorations">
+          <!-- Sorting Hat & Spellbook Illustration -->
+          <div class="sorting-hat-scene" aria-hidden="true">
+            <div class="sorting-hat-shape"></div>
+            <div class="antique-books-stack"></div>
+          </div>
+          <div class="candle c3" aria-hidden="true"><div class="flame"></div></div>
+        </div>
+      </div>
+
+      <div class="card-wrapper">
+        <article class="parchment-card">
+          <div class="hp-emblem mini" aria-hidden="true">
+            <svg class="hp-glasses" viewBox="0 0 100 40" fill="none" stroke="currentColor">
+              <circle cx="30" cy="22" r="13" stroke-width="2.5" />
+              <circle cx="70" cy="22" r="13" stroke-width="2.5" />
+              <path d="M 43 20 Q 50 16 57 20" stroke-width="2" fill="none" />
+              <path class="hp-scar" d="M 50 2 L 46 8 L 51 9 L 47 15" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <h2 class="card-title-script font-script" id="s4-title">And because I like you...</h2>
+
+          <div class="focal-statement">
+            <p class="focal-lead font-letter" id="s4-subtitle">
+              I'd really like to <strong>know you better</strong> —
+            </p>
+            <p class="card-body font-letter" id="s4-description">
+              Your thoughts, your interests, your stories, and just more of you. ♡
+            </p>
+          </div>
+
+          <div class="mini-decor-star" aria-hidden="true">✦</div>
+
+          <div class="card-nav-single">
+            <button class="nav-circle-btn next-step-btn" data-target="5" aria-label="Go to next screen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 5: THE INVITATION                   -->
+    <!-- ========================================== -->
+    <section class="screen-card" id="screen-5" data-index="5" aria-label="The Invitation">
+      <div class="screen-bg bg-invitation">
+        <div class="ambient-glow glow-cozy"></div>
+        <div class="scene-decorations">
+          <!-- Cozy Christmas Corner: Cocoa Mug, Tree, Fairy Lights -->
+          <div class="cozy-corner" aria-hidden="true">
+            <div class="marshmallow-mug">
+              <div class="mug-steam"></div>
+            </div>
+            <div class="tree-lights"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-wrapper">
+        <article class="parchment-card card-invitation">
+          <div class="hp-emblem mini" aria-hidden="true">
+            <svg class="hp-glasses" viewBox="0 0 100 40" fill="none" stroke="currentColor">
+              <circle cx="30" cy="22" r="13" stroke-width="2.5" />
+              <circle cx="70" cy="22" r="13" stroke-width="2.5" />
+              <path d="M 43 20 Q 50 16 57 20" stroke-width="2" fill="none" />
+              <path class="hp-scar" d="M 50 2 L 46 8 L 51 9 L 47 15" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <h2 class="card-title font-magical invite-title" id="s5-title">
+            A Small<br><span class="font-script invite-script">Christmas Wish</span> <span class="tree-icon">🎄</span>
+          </h2>
+
+          <div class="the-big-question">
+            <p class="question-text" id="s5-question">
+              Would you like to go on a Christmas movie date with me? 🎬🍿
+            </p>
+          </div>
+
+          <p class="card-body font-letter invite-details" id="s5-details">
+            Just the two of us, a good movie, some food, and hopefully a few long and easy conversations.
+          </p>
+
+          <p class="no-pressure font-letter" id="s5-nopressure">
+            No pressure, no expectations — I'd simply love the chance to know you better. ♡
+          </p>
+
+          <div class="date-badge" id="s5-date-badge">
+            <span class="badge-icon">📅</span>
+            <span class="badge-text" id="s5-date-text">Proposed: December 20, 2026</span>
+          </div>
+
+          <button class="magical-btn btn-primary btn-invite-next next-step-btn" data-target="6" id="btn-to-reply">
+            <span class="btn-text">Leave me a message ♡</span>
+            <div class="btn-shimmer" aria-hidden="true"></div>
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 6: HER REPLY                        -->
+    <!-- ========================================== -->
+    <section class="screen-card" id="screen-6" data-index="6" aria-label="Her Reply">
+      <div class="screen-bg bg-reply">
+        <div class="ambient-glow glow-gentle"></div>
+      </div>
+
+      <div class="card-wrapper">
+        <article class="parchment-card card-reply" id="reply-card">
+          <!-- Standard Form State -->
+          <div id="reply-form-container">
+            <h2 class="card-title-script font-script" id="s6-title">Your Turn ♡</h2>
+
+            <p class="reply-comfort font-letter" id="s6-subtitle">
+              You don't have to give me an answer right now.
+            </p>
+            <p class="reply-desc font-letter" id="s6-explanation">
+              But if you'd like, you can leave me a little note — anything you feel like saying. ♡
+            </p>
+
+            <!-- Quick Choice Chips (Optional helper for her) -->
+            <div class="quick-chips-wrapper" aria-label="Quick response options">
+              <span class="chips-label">Quick suggestions:</span>
+              <div class="quick-chips" id="quick-chips">
+                <!-- Dynamically generated or fallback -->
+                <button type="button" class="chip-btn" data-message="I'd love to! 🎬🍿">I'd love to! 🎬🍿</button>
+                <button type="button" class="chip-btn" data-message="Sounds lovely, let's pick a movie! 🎄">Sounds lovely! 🎄</button>
+                <button type="button" class="chip-btn" data-message="I'd rather stay friends 🤍">I'd rather stay friends 🤍</button>
+                <button type="button" class="chip-btn" data-message="Let me think about it ✨">Let me think about it ✨</button>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form id="response-form" class="response-form" novalidate>
+              <div class="input-group">
+                <label for="reply-message" class="sr-only">Your message to Aryan</label>
+                <textarea 
+                  id="reply-message" 
+                  name="message" 
+                  class="parchment-textarea font-letter" 
+                  rows="4" 
+                  placeholder="Write a message... (completely optional)"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="magical-btn btn-primary" id="btn-submit-reply">
+                  <span class="btn-text" id="s6-send-btn">Send Note 🕊️</span>
+                  <div class="btn-shimmer" aria-hidden="true"></div>
+                </button>
+              </div>
+
+              <div id="form-error" class="form-feedback error-msg" role="alert" style="display: none;"></div>
+            </form>
+          </div>
+
+          <!-- Success State (Shown after submit) -->
+          <div id="reply-success-container" class="reply-success" style="display: none;">
+            <div class="success-icon" aria-hidden="true">💌 ✨</div>
+            <h3 class="card-title font-magical success-title" id="success-title">
+              Sent with a sprinkle of magic! ✨
+            </h3>
+            <p class="card-body font-letter success-body" id="success-text">
+              Thank you for reading this, Mehak. Whatever you choose, having you in my life is something I truly treasure. Have a wonderful Christmas! 🎄❤️
+            </p>
+            <div class="card-divider" aria-hidden="true">
+              <span class="divider-star">✦</span>
+            </div>
+            <button type="button" class="text-link-btn" id="btn-replay-story">
+              Read again from the beginning ✨
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navigation Arrows for Desktop & Easy Accessibility -->
+  <nav class="nav-controls" aria-label="Story Navigation">
+    <button id="nav-prev" class="global-nav-btn prev-btn" aria-label="Previous card" style="display: none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <button id="nav-next" class="global-nav-btn next-btn" aria-label="Next card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Subtle swipe hint for mobile -->
+  <div class="swipe-hint" id="swipe-hint" aria-hidden="true">
+    <span>Swipe or tap arrow to turn page</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
