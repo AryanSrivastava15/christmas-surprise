@@ -1,15 +1,14 @@
-/**
+﻿/**
  * ===================================================================
- * A Little Christmas Surprise 🎄✨ - Main Script
+ * A Little Christmas Story ❤️ - Main Controller
  * ===================================================================
  */
 
 (function () {
   'use strict';
 
-  // State Management
-  let currentScreen = 1;
-  const totalScreens = 6;
+  // Navigation State
+  let currentScreenId = '1';
   let isTransitioning = false;
   let touchStartX = 0;
   let touchStartY = 0;
@@ -17,6 +16,7 @@
   // DOM Elements
   const screens = document.querySelectorAll('.screen-card');
   const progressDots = document.querySelectorAll('.progress-dot');
+  const btnBackHeader = document.getElementById('btn-back-header');
   const navPrev = document.getElementById('nav-prev');
   const navNext = document.getElementById('nav-next');
   const swipeHint = document.getElementById('swipe-hint');
@@ -24,187 +24,119 @@
   const snowCanvas = document.getElementById('snow-canvas');
   const sparklesContainer = document.getElementById('sparkles-container');
 
-  // Reply Form Elements
-  const responseForm = document.getElementById('response-form');
-  const replyMessage = document.getElementById('reply-message');
-  const replyFormContainer = document.getElementById('reply-form-container');
-  const replySuccessContainer = document.getElementById('reply-success-container');
-  const btnSubmitReply = document.getElementById('btn-submit-reply');
-  const formError = document.getElementById('form-error');
-  const quickChipsContainer = document.getElementById('quick-chips');
-  const btnReplayStory = document.getElementById('btn-replay-story');
+  // Outcome buttons
+  const btnChoiceYes = document.getElementById('btn-choice-yes');
+  const btnChoiceFriendship = document.getElementById('btn-choice-friendship');
+  const btnYesCelebrate = document.getElementById('btn-yes-celebrate');
+  const btnFriendshipChaos = document.getElementById('btn-friendship-chaos');
 
   /* ===================================================================
-     1. POPULATE DYNAMIC CONFIGURATION
+     1. INJECT DOODLE AVATARS
+     =================================================================== */
+  function injectDoodles() {
+    if (typeof Doodles === 'undefined') return;
+
+    const slot1 = document.getElementById('doodle-slot-1');
+    const slot2 = document.getElementById('doodle-slot-2');
+    const slot3 = document.getElementById('doodle-slot-3');
+    const slot4 = document.getElementById('doodle-slot-4');
+    const slot5A = document.getElementById('doodle-slot-5A');
+    const slot5B = document.getElementById('doodle-slot-5B');
+
+    if (slot1) slot1.innerHTML = Doodles.boyReadingBook();
+    if (slot2) slot2.innerHTML = Doodles.boyConfession();
+    if (slot3) slot3.innerHTML = Doodles.boyOverthinkingPhone();
+    if (slot4) slot4.innerHTML = Doodles.boyInvitationTicket();
+    if (slot5A) slot5A.innerHTML = Doodles.boyCelebratingYes();
+    if (slot5B) slot5B.innerHTML = Doodles.boyPeacefulFriendship();
+  }
+
+  /* ===================================================================
+     2. POPULATE DYNAMIC CONFIGURATION
      =================================================================== */
   function applyConfig() {
     if (typeof CONFIG === 'undefined') return;
 
-    // Screen 1
-    const s1Tagline = document.getElementById('s1-tagline');
-    const s1Heading = document.getElementById('s1-heading');
-    const s1Message = document.getElementById('s1-message');
-    const s1Button = document.getElementById('s1-button');
-    if (s1Tagline && CONFIG.screen1?.tagline) s1Tagline.textContent = CONFIG.screen1.tagline;
-    if (s1Heading && CONFIG.screen1?.heading) s1Heading.innerHTML = `${CONFIG.screen1.heading} <span class="sparkle-gold">✨</span>`;
-    if (s1Message && CONFIG.screen1?.message) s1Message.textContent = CONFIG.screen1.message;
-    if (s1Button && CONFIG.screen1?.buttonText) s1Button.textContent = CONFIG.screen1.buttonText;
-
-    // Screen 2
-    const s2Title = document.getElementById('s2-title');
-    const s2List = document.getElementById('s2-list');
-    if (s2Title && CONFIG.screen2?.title) s2Title.textContent = CONFIG.screen2.title;
-    if (s2List && Array.isArray(CONFIG.screen2?.items)) {
-      s2List.innerHTML = '';
-      const iconMap = {
-        book: '📖',
-        music: '🎵',
-        chat: '💬',
-        star: '⭐'
-      };
-      CONFIG.screen2.items.forEach((item) => {
-        const li = document.createElement('li');
-        li.className = 'noticed-item';
-        
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'noticed-icon';
-        iconSpan.textContent = iconMap[item.icon] || '✨';
-        
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'noticed-content';
-
-        if (item.highlight && item.text.includes(item.highlight)) {
-          const parts = item.text.split(item.highlight);
-          contentDiv.innerHTML = `<span>${parts[0]}<strong>${item.highlight}</strong>${parts[1]}</span>`;
-        } else {
-          contentDiv.textContent = item.text;
-        }
-
-        li.appendChild(iconSpan);
-        li.appendChild(contentDiv);
-        s2List.appendChild(li);
-      });
-    }
-
-    // Screen 3
-    const s3Intro = document.getElementById('s3-intro');
-    const s3Badge = document.getElementById('s3-badge');
-    const s3Body = document.getElementById('s3-body');
-    if (s3Intro && CONFIG.screen3?.intro) s3Intro.textContent = CONFIG.screen3.intro;
-    if (s3Badge && CONFIG.screen3?.confessionBadge) {
-      s3Badge.querySelector('.confession-text').textContent = CONFIG.screen3.confessionBadge;
-    }
-    if (s3Body && CONFIG.screen3?.body) s3Body.textContent = CONFIG.screen3.body;
-
-    // Screen 4
-    const s4Title = document.getElementById('s4-title');
-    const s4Subtitle = document.getElementById('s4-subtitle');
-    const s4Desc = document.getElementById('s4-description');
-    if (s4Title && CONFIG.screen4?.title) s4Title.textContent = CONFIG.screen4.title;
-    if (s4Subtitle && CONFIG.screen4?.subtitle) s4Subtitle.innerHTML = `I'd really like to <strong>know you better</strong> —`;
-    if (s4Desc && CONFIG.screen4?.description) s4Desc.textContent = CONFIG.screen4.description;
-
-    // Screen 5
-    const s5Title = document.getElementById('s5-title');
-    const s5Question = document.getElementById('s5-question');
-    const s5Details = document.getElementById('s5-details');
-    const s5NoPressure = document.getElementById('s5-nopressure');
-    const s5DateText = document.getElementById('s5-date-text');
-    if (s5Question && CONFIG.screen5?.question) s5Question.textContent = CONFIG.screen5.question;
-    if (s5Details && CONFIG.screen5?.details) s5Details.textContent = CONFIG.screen5.details;
-    if (s5NoPressure && CONFIG.screen5?.noPressureText) s5NoPressure.textContent = CONFIG.screen5.noPressureText;
-    if (s5DateText && CONFIG.proposedDate) s5DateText.textContent = `Proposed: ${CONFIG.proposedDate}`;
-
-    // Screen 6
-    const s6Title = document.getElementById('s6-title');
-    const s6Subtitle = document.getElementById('s6-subtitle');
-    const s6Expl = document.getElementById('s6-explanation');
-    const s6SendBtn = document.getElementById('s6-send-btn');
-    const successTitle = document.getElementById('success-title');
-    const successText = document.getElementById('success-text');
-
-    if (s6Title && CONFIG.screen6?.title) s6Title.textContent = CONFIG.screen6.title;
-    if (s6Subtitle && CONFIG.screen6?.subtitle) s6Subtitle.textContent = CONFIG.screen6.subtitle;
-    if (s6Expl && CONFIG.screen6?.explanation) s6Expl.textContent = CONFIG.screen6.explanation;
-    if (s6SendBtn && CONFIG.screen6?.sendButtonText) s6SendBtn.textContent = CONFIG.screen6.sendButtonText;
-    if (replyMessage && CONFIG.screen6?.placeholder) replyMessage.placeholder = CONFIG.screen6.placeholder;
-    if (successTitle && CONFIG.screen6?.successMessage?.title) successTitle.textContent = CONFIG.screen6.successMessage.title;
-    if (successText && CONFIG.screen6?.successMessage?.text) successText.textContent = CONFIG.screen6.successMessage.text;
-
-    // Quick Chips
-    if (quickChipsContainer && Array.isArray(CONFIG.screen6?.quickChips)) {
-      quickChipsContainer.innerHTML = '';
-      CONFIG.screen6.quickChips.forEach((chipText) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'chip-btn';
-        btn.dataset.message = chipText;
-        btn.textContent = chipText;
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.chip-btn').forEach(c => c.classList.remove('selected'));
-          btn.classList.add('selected');
-          replyMessage.value = chipText;
-          replyMessage.focus();
-        });
-        quickChipsContainer.appendChild(btn);
-      });
+    // Date in Plan Details
+    const planDateText = document.getElementById('plan-date-text');
+    if (planDateText && CONFIG.proposedDate) {
+      planDateText.textContent = CONFIG.proposedDate;
     }
   }
 
   /* ===================================================================
-     2. NAVIGATION & SCREEN TRANSITIONS
+     3. NAVIGATION CONTROLLER
      =================================================================== */
-  function goToScreen(targetIndex, direction = 'next') {
-    if (isTransitioning || targetIndex === currentScreen) return;
-    if (targetIndex < 1 || targetIndex > totalScreens) return;
+  function goToScreen(targetId, direction = 'next') {
+    if (isTransitioning || targetId === currentScreenId) return;
+
+    const oldScreenEl = document.getElementById(`screen-${currentScreenId}`);
+    const newScreenEl = document.getElementById(`screen-${targetId}`);
+    if (!newScreenEl) return;
 
     isTransitioning = true;
-    const oldScreenEl = document.querySelector(`.screen-card[data-index="${currentScreen}"]`);
-    const newScreenEl = document.querySelector(`.screen-card[data-index="${targetIndex}"]`);
 
-    if (!newScreenEl) {
-      isTransitioning = false;
-      return;
-    }
-
-    // Set transition exit classes
+    // Animate old screen out
     if (oldScreenEl) {
       oldScreenEl.classList.remove('active');
       oldScreenEl.classList.add(direction === 'next' ? 'exit-next' : 'exit-prev');
     }
 
+    // Animate new screen in
     newScreenEl.classList.remove('exit-next', 'exit-prev');
     newScreenEl.classList.add('active');
 
-    // Update progress bar
+    // Update Progress Indicator
+    let progressStep = 1;
+    if (targetId === '1') progressStep = 1;
+    else if (targetId === '2') progressStep = 2;
+    else if (targetId === '3') progressStep = 3;
+    else if (targetId === '4') progressStep = 4;
+    else if (targetId === '5A' || targetId === '5B') progressStep = 5;
+
     progressDots.forEach((dot) => {
       const step = parseInt(dot.dataset.step, 10);
       dot.classList.remove('active', 'passed');
-      if (step === targetIndex) {
+      if (step === progressStep) {
         dot.classList.add('active');
-      } else if (step < targetIndex) {
+      } else if (step < progressStep) {
         dot.classList.add('passed');
       }
     });
 
     const progressContainer = document.getElementById('story-progress');
     if (progressContainer) {
-      progressContainer.setAttribute('aria-valuenow', targetIndex);
+      progressContainer.setAttribute('aria-valuenow', progressStep);
     }
 
-    currentScreen = targetIndex;
+    currentScreenId = targetId;
 
-    // Update arrow visibility
+    // Update Header Back Button
+    if (btnBackHeader) {
+      btnBackHeader.style.display = (currentScreenId === '1') ? 'none' : 'flex';
+    }
+
+    // Update Global Floating Arrow Buttons
     if (navPrev) {
-      navPrev.style.display = currentScreen > 1 ? 'flex' : 'none';
+      navPrev.style.display = (currentScreenId === '1') ? 'none' : 'flex';
     }
     if (navNext) {
-      navNext.style.display = currentScreen < totalScreens ? 'flex' : 'none';
+      // Hide on outcome screens or invitation screen
+      navNext.style.display = (currentScreenId === '4' || currentScreenId === '5A' || currentScreenId === '5B') ? 'none' : 'flex';
     }
 
-    // Hide swipe hint once user moves past Screen 1
-    if (swipeHint && currentScreen > 1) {
+    // Hide swipe hint after first interaction
+    if (swipeHint && currentScreenId !== '1') {
       swipeHint.style.opacity = '0';
+    }
+
+    // Trigger celebration effects if Yes outcome
+    if (targetId === '5A') {
+      createCelebrationBurst();
+      if (musicBox.audioCtx) {
+        musicBox.playChime(783.99, 1.2);
+        setTimeout(() => musicBox.playChime(1174.66, 1.8), 220);
+      }
     }
 
     setTimeout(() => {
@@ -212,62 +144,119 @@
         oldScreenEl.classList.remove('exit-next', 'exit-prev');
       }
       isTransitioning = false;
-    }, 650);
+    }, 600);
   }
 
-  // Step Buttons (buttons within cards)
+  function getPreviousScreenId(currentId) {
+    if (currentId === '2') return '1';
+    if (currentId === '3') return '2';
+    if (currentId === '4') return '3';
+    if (currentId === '5A' || currentId === '5B') return '4';
+    return '1';
+  }
+
+  function getNextScreenId(currentId) {
+    if (currentId === '1') return '2';
+    if (currentId === '2') return '3';
+    if (currentId === '3') return '4';
+    return null;
+  }
+
+  // Next-step buttons in cards
   document.querySelectorAll('.next-step-btn').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const target = parseInt(btn.dataset.target, 10) || (currentScreen + 1);
-      goToScreen(target, 'next');
-    });
-  });
+      const target = btn.dataset.target;
+      if (target) goToScreen(target, 'next');
 
-  const btnStart = document.getElementById('btn-start');
-  if (btnStart) {
-    btnStart.addEventListener('click', () => {
-      goToScreen(2, 'next');
-      // If music wasn't started yet and music box is enabled, start it softly on first interaction!
+      // Soft start music on first button click if enabled
       if (CONFIG.enableMusicBox && !musicBox.isPlaying) {
         musicBox.start();
       }
     });
+  });
+
+  // Header Back Button
+  if (btnBackHeader) {
+    btnBackHeader.addEventListener('click', () => {
+      const prevId = getPreviousScreenId(currentScreenId);
+      goToScreen(prevId, 'prev');
+    });
   }
 
-  // Global Arrows
+  // Floating Arrows
   if (navPrev) {
-    navPrev.addEventListener('click', () => goToScreen(currentScreen - 1, 'prev'));
+    navPrev.addEventListener('click', () => {
+      const prevId = getPreviousScreenId(currentScreenId);
+      goToScreen(prevId, 'prev');
+    });
   }
   if (navNext) {
-    navNext.addEventListener('click', () => goToScreen(currentScreen + 1, 'next'));
+    navNext.addEventListener('click', () => {
+      const nextId = getNextScreenId(currentScreenId);
+      if (nextId) goToScreen(nextId, 'next');
+    });
   }
 
   // Progress Dot Clicks
   progressDots.forEach((dot) => {
     dot.addEventListener('click', () => {
-      const step = parseInt(dot.dataset.step, 10);
-      if (step !== currentScreen) {
-        goToScreen(step, step > currentScreen ? 'next' : 'prev');
+      const step = dot.dataset.step;
+      if (step === '1' || step === '2' || step === '3' || step === '4') {
+        goToScreen(step, parseInt(step, 10) > parseInt(currentScreenId, 10) ? 'next' : 'prev');
       }
     });
   });
 
-  // Keyboard Navigation
-  window.addEventListener('keydown', (e) => {
-    // Avoid hijacking when typing inside textarea
-    if (e.target && e.target.tagName === 'TEXTAREA') return;
+  // Invitation Choice Buttons (Page 4)
+  if (btnChoiceYes) {
+    btnChoiceYes.addEventListener('click', () => {
+      goToScreen('5A', 'next');
+    });
+  }
 
-    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
-      e.preventDefault();
-      goToScreen(currentScreen + 1, 'next');
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      e.preventDefault();
-      goToScreen(currentScreen - 1, 'prev');
+  if (btnChoiceFriendship) {
+    btnChoiceFriendship.addEventListener('click', () => {
+      goToScreen('5B', 'next');
+    });
+  }
+
+  // Outcome Final Buttons
+  if (btnYesCelebrate) {
+    btnYesCelebrate.addEventListener('click', () => {
+      // Re-trigger celebratory chime
+      createCelebrationBurst();
+      if (musicBox.audioCtx) {
+        musicBox.playChime(1046.50, 1.2);
+      }
+    });
+  }
+
+  if (btnFriendshipChaos) {
+    btnFriendshipChaos.addEventListener('click', () => {
+      // Return gently to Page 1
+      goToScreen('1', 'prev');
+    });
+  }
+
+  // Keyboard navigation
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      const next = getNextScreenId(currentScreenId);
+      if (next) {
+        e.preventDefault();
+        goToScreen(next, 'next');
+      }
+    } else if (e.key === 'ArrowLeft') {
+      const prev = getPreviousScreenId(currentScreenId);
+      if (currentScreenId !== '1') {
+        e.preventDefault();
+        goToScreen(prev, 'prev');
+      }
     }
   });
 
-  // Touch Swipe Gestures
+  // Mobile Touch Swipe Gestures
   window.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
       touchStartX = e.touches[0].clientX;
@@ -282,12 +271,13 @@
     const diffX = touchEndX - touchStartX;
     const diffY = touchEndY - touchStartY;
 
-    // Check if horizontal swipe is dominant and exceeds threshold
     if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
       if (diffX < 0) {
-        goToScreen(currentScreen + 1, 'next');
+        const next = getNextScreenId(currentScreenId);
+        if (next) goToScreen(next, 'next');
       } else {
-        goToScreen(currentScreen - 1, 'prev');
+        const prev = getPreviousScreenId(currentScreenId);
+        if (currentScreenId !== '1') goToScreen(prev, 'prev');
       }
     }
 
@@ -296,7 +286,32 @@
   }, { passive: true });
 
   /* ===================================================================
-     3. 60FPS SNOWFALL CANVAS SIMULATION
+     4. CELEBRATION CONFETTI BURST (YES PAGE)
+     =================================================================== */
+  function createCelebrationBurst() {
+    const screenYes = document.getElementById('screen-5A');
+    if (!screenYes) return;
+
+    for (let i = 0; i < 35; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'floating-sparkle';
+      const size = Math.random() * 8 + 4;
+      const colors = ['#d4a843', '#d93848', '#ffffff', '#2d4a3e', '#ffd770'];
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      particle.style.left = `${Math.random() * 80 + 10}vw`;
+      particle.style.top = `${Math.random() * 60 + 20}vh`;
+      particle.style.animation = `sparkle-float ${Math.random() * 2 + 1.5}s ease-out forwards`;
+      screenYes.appendChild(particle);
+
+      setTimeout(() => particle.remove(), 2500);
+    }
+  }
+
+  /* ===================================================================
+     5. 60FPS SNOWFALL CANVAS SIMULATION
      =================================================================== */
   function initSnowfall() {
     if (!snowCanvas) return;
@@ -311,7 +326,7 @@
       height = snowCanvas.height = window.innerHeight;
     });
 
-    const flakeCount = Math.min(Math.floor(width / 16), 55);
+    const flakeCount = Math.min(Math.floor(width / 18), 50);
     const flakes = [];
 
     for (let i = 0; i < flakeCount; i++) {
@@ -321,15 +336,13 @@
         r: Math.random() * 2.2 + 0.8,
         speedY: Math.random() * 0.9 + 0.4,
         speedX: Math.random() * 0.4 - 0.2,
-        opacity: Math.random() * 0.6 + 0.2,
+        opacity: Math.random() * 0.6 + 0.25,
         swayAngle: Math.random() * Math.PI * 2,
         swaySpeed: Math.random() * 0.02 + 0.01
       });
     }
 
-    let animationFrameId;
     let isTabActive = true;
-
     document.addEventListener('visibilitychange', () => {
       isTabActive = !document.hidden;
       if (isTabActive) render();
@@ -345,7 +358,6 @@
         f.y += f.speedY;
         f.x += Math.sin(f.swayAngle) * 0.4 + f.speedX;
 
-        // Wrap around
         if (f.y > height + 5) {
           f.y = -5;
           f.x = Math.random() * width;
@@ -361,18 +373,18 @@
         ctx.fill();
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      requestAnimationFrame(render);
     }
 
     render();
   }
 
   /* ===================================================================
-     4. FLOATING MAGIC SPARKLES
+     6. AMBIENT SPARKLES
      =================================================================== */
   function initSparkles() {
     if (!sparklesContainer) return;
-    const count = 18;
+    const count = 16;
     for (let i = 0; i < count; i++) {
       const sparkle = document.createElement('div');
       sparkle.className = 'floating-sparkle';
@@ -388,16 +400,14 @@
   }
 
   /* ===================================================================
-     5. PROCEDURAL ENCHANTED MUSIC BOX (Web Audio API)
-     Plays a serene, crystalline celesta / music box melody
-     Zero external files or network requests needed!
+     7. PROCEDURAL ENCHANTED MUSIC BOX (Web Audio API)
+     Plays crystalline celesta / music box melody
      =================================================================== */
   const musicBox = {
     audioCtx: null,
     isPlaying: false,
     intervalId: null,
 
-    // Gentle arpeggio notes in frequency (Hz) - Harry Potter / Winter motif
     notes: [
       { f: 587.33, d: 0.6 }, // D5
       { f: 783.99, d: 0.9 }, // G5
@@ -425,11 +435,8 @@
       if (!this.audioCtx) return;
       const now = this.audioCtx.currentTime;
 
-      // Primary tone
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
-
-      // Shimmer harmonic overtone (gives music-box crystal bell character)
       const osc2 = this.audioCtx.createOscillator();
       const gain2 = this.audioCtx.createGain();
 
@@ -437,16 +444,14 @@
       osc.frequency.setValueAtTime(freq, now);
 
       osc2.type = 'triangle';
-      osc2.frequency.setValueAtTime(freq * 2.004, now); // slight detune sparkle
+      osc2.frequency.setValueAtTime(freq * 2.004, now);
 
-      // Subtle lowpass filter for warmth
       const filter = this.audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(2800, now);
 
-      // Envelopes
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.08, now + 0.015);
+      gain.gain.linearRampToValueAtTime(0.07, now + 0.015);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
       gain2.gain.setValueAtTime(0, now);
@@ -517,97 +522,19 @@
   }
 
   /* ===================================================================
-     6. FORM SUBMISSION & HER RESPONSE
-     =================================================================== */
-  if (responseForm) {
-    responseForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const messageText = replyMessage ? replyMessage.value.trim() : '';
-
-      if (formError) formError.style.display = 'none';
-      if (btnSubmitReply) {
-        btnSubmitReply.disabled = true;
-        btnSubmitReply.querySelector('.btn-text').textContent = 'Sending ✨...';
-      }
-
-      const payload = {
-        recipient: CONFIG.recipientName || 'Mehak',
-        message: messageText || '(Sent an empty response with love)',
-        timestamp: new Date().toISOString()
-      };
-
-      // Always save a local copy so no message is ever lost
-      try {
-        const stored = JSON.parse(localStorage.getItem('christmas_surprises') || '[]');
-        stored.push(payload);
-        localStorage.setItem('christmas_surprises', JSON.stringify(stored));
-      } catch (err) {
-        console.warn('LocalStorage unavailable:', err);
-      }
-
-      // Check if real endpoint is provided
-      if (CONFIG.formEndpoint && CONFIG.formEndpoint.trim() !== '') {
-        try {
-          const response = await fetch(CONFIG.formEndpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
-
-          if (!response.ok) {
-            console.warn('Form service responded with status', response.status);
-          }
-        } catch (fetchErr) {
-          console.warn('Network issue delivering to endpoint:', fetchErr);
-        }
-      }
-
-      // Display graceful warm confirmation
-      setTimeout(() => {
-        if (replyFormContainer) replyFormContainer.style.display = 'none';
-        if (replySuccessContainer) replySuccessContainer.style.display = 'block';
-
-        // Play gentle celebratory chime
-        if (musicBox.audioCtx) {
-          musicBox.playChime(783.99, 1.2); // G5
-          setTimeout(() => musicBox.playChime(1174.66, 2.0), 200); // D6
-        }
-      }, 500);
-    });
-  }
-
-  // Replay Story
-  if (btnReplayStory) {
-    btnReplayStory.addEventListener('click', () => {
-      if (replySuccessContainer) replySuccessContainer.style.display = 'none';
-      if (replyFormContainer) replyFormContainer.style.display = 'block';
-      if (btnSubmitReply) {
-        btnSubmitReply.disabled = false;
-        btnSubmitReply.querySelector('.btn-text').textContent = CONFIG.screen6?.sendButtonText || 'Send Note 🕊️';
-      }
-      if (replyMessage) replyMessage.value = '';
-      document.querySelectorAll('.chip-btn').forEach(c => c.classList.remove('selected'));
-      goToScreen(1, 'prev');
-    });
-  }
-
-  /* ===================================================================
-     7. INITIALIZATION
+     8. INITIALIZATION
      =================================================================== */
   function init() {
+    injectDoodles();
     applyConfig();
     initSnowfall();
     initSparkles();
 
-    // Set initial nav arrow states
+    if (btnBackHeader) btnBackHeader.style.display = 'none';
     if (navPrev) navPrev.style.display = 'none';
     if (navNext) navNext.style.display = 'flex';
   }
 
-  // Run on DOM Ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
